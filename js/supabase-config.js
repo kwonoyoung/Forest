@@ -1,3 +1,4 @@
+(() => {
 const FOREST_SUPABASE_URL = 'https://jacvltitwrxyfoasjcwq.supabase.co';
 const FOREST_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rzPK7YDpZxKJgBeJ64Z2qw_4uH1qbfW';
 
@@ -18,3 +19,4 @@ window.forestSupabase = window.supabase.createClient(
     }
   }
 );
+})();
