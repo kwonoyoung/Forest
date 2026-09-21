@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true;
+    }
+
+    function validTree(treeId) {
+      return request.resource.data.keys().hasOnly([
+          'treeId','treeName','assetNo','species','age','location','propertyType','status','storyText',
+          'imageUrl','imagePath','audioUrl','audioPath','createdAt','updatedAt'
+        ])
+        && request.resource.data.treeId == treeId
+        && request.resource.data.treeName is string
+        && request.resource.data.treeName.size() > 0
+        && request.resource.data.treeName.size() <= 100
+        && request.resource.data.storyText is string
+        && request.resource.data.storyText.size() <= 10000;
+    }
+
+    match /trees/{treeId} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create, update: if isAdmin() && validTree(treeId);
+      allow delete: if isAdmin();
+    }
+
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
