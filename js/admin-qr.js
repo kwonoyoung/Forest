@@ -1,0 +1,3 @@
+import {$} from './admin-view.js';
+export function treeUrl(id){const u=new URL('../tree/',location.href);u.searchParams.set('id',id);return u.toString()}
+export function openQr(t){const url=treeUrl(t.id);$('qrTreeName').textContent=t.treeName||t.id;$('qrUrl').value=url;$('qrCanvas').replaceChildren();if(window.QRCode)new QRCode($('qrCanvas'),{text:url,width:210,height:210,colorDark:'#123f32',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.H});$('qrModal').classList.add('open')}
